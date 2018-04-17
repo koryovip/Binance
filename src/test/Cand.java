@@ -19,7 +19,7 @@ public class Cand implements Runnable, Exchange {
 
     public void execute(final Exchange exchange, final BigDecimal period) throws Exception, Exception {
         final int round = 9;
-        List<CandleValue> candleValueList = exchange.getCandles(null, period.intValue() + 1);
+        List<CandleValue> candleValueList = exchange.getCandles(null, period.intValue() + 10);
         // calc boll
         List<BollValue> bollValueList = CalcBoll.me().calc(candleValueList, period, round);
 
@@ -60,7 +60,7 @@ public class Cand implements Runnable, Exchange {
     }
 
     @Override
-    public List<CandleValue> getCandles(KRCandleType candleType, int limit) throws Exception {
+    public List<CandleValue> getCandles(final KRCandleType candleType, final int limit) throws Exception {
         List<Candlestick> org = BinanceClient.me().apiRestClient().getCandlestickBars("XRPBTC", CandlestickInterval.FIVE_MINUTES, limit, null, null);
         final List<CandleValue> result = new ArrayList<CandleValue>();
         for (Candlestick candlestick : org) {
@@ -78,16 +78,16 @@ public class Cand implements Runnable, Exchange {
     @Override
     public void run() {
         try {
-            final BigDecimal period = new BigDecimal(20);
             this.execute(this, period);
         } catch (Exception e) {
             e.printStackTrace();
         }
     }
 
+    static final BigDecimal period = new BigDecimal(20);
+
     public static void main(String[] args) throws Exception, Exception {
         Cand cand = new Cand();
-        final BigDecimal period = new BigDecimal(20);
         cand.execute(cand, period);
     }
 
