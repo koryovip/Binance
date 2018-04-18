@@ -15,11 +15,11 @@ import ifc.calc.CalcBoll;
 import utils.BinanceClient;
 import utils.DateUtil;
 
-public class Cand implements Runnable, Exchange {
+public class Cand implements Runnable, Exchange<String, CandlestickInterval> {
 
     public void execute(final Exchange exchange, final BigDecimal period) throws Exception, Exception {
         final int round = 9;
-        List<CandleValue> candleValueList = exchange.getCandles(null, period.intValue() + 10);
+        List<CandleValue> candleValueList = exchange.getCandles(null, null, period.intValue() + 10);
         // calc boll
         List<BollValue> bollValueList = CalcBoll.me().calc(candleValueList, period, round);
 
@@ -28,9 +28,9 @@ public class Cand implements Runnable, Exchange {
             CandleValue ohlcv = candleValueList.get(ii);
             System.out.print(String.format("%s\t%s\t%s\t%s\t%s", DateUtil.me().format1(ohlcv.time), ohlcv.open, ohlcv.high, ohlcv.low, ohlcv.close));
             BollValue bollRow = bollValueList.get(ii);
-            System.out.print(String.format("\t|\t%s\t%s\t%s\t%s\t%s", bollRow.ma, bollRow.sigmaPlus1, bollRow.sigmaPlus2, bollRow.sigmaMinus1, bollRow.sigmaMinus2));
+            System.out.print(String.format("\t|\t%s\t%s\t%s\t%s\t%s", bollRow.ma, bollRow.high1, bollRow.high2, bollRow.low1, bollRow.low2));
             if (bollRow.isValid()) {
-                this.check(ohlcv, bollRow.sigmaPlus2, bollRow.sigmaMinus2, false);
+                this.check(ohlcv, bollRow.high2, bollRow.low2, false);
             }
             System.out.println();
         }
@@ -59,7 +59,7 @@ public class Cand implements Runnable, Exchange {
         }
     }
 
-    @Override
+
     public List<CandleValue> getCandles(final KRCandleType candleType, final int limit) throws Exception {
         List<Candlestick> org = BinanceClient.me().apiRestClient().getCandlestickBars("XRPBTC", CandlestickInterval.FIVE_MINUTES, limit, null, null);
         final List<CandleValue> result = new ArrayList<CandleValue>();
@@ -89,6 +89,24 @@ public class Cand implements Runnable, Exchange {
     public static void main(String[] args) throws Exception, Exception {
         Cand cand = new Cand();
         cand.execute(cand, period);
+    }
+
+    @Override
+    public List<CandleValue> getCandles(String pair, CandlestickInterval candleType, int limit) throws Exception {
+        // TODO 自動生成されたメソッド・スタブ
+        return null;
+    }
+
+    @Override
+    public List<BollValue> getBoll(List<CandleValue> candleValueList, String pair, CandlestickInterval candleType, int period, int round) throws Exception {
+        // TODO 自動生成されたメソッド・スタブ
+        return null;
+    }
+
+    @Override
+    public boolean lastBoll(CandleValue lastOhlcv, BollValue lastBollRow) throws Exception {
+        // TODO 自動生成されたメソッド・スタブ
+        return false;
     }
 
 }
