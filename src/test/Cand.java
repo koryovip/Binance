@@ -59,7 +59,6 @@ public class Cand implements Runnable, Exchange<String, CandlestickInterval> {
         }
     }
 
-
     public List<CandleValue> getCandles(final KRCandleType candleType, final int limit) throws Exception {
         List<Candlestick> org = BinanceClient.me().apiRestClient().getCandlestickBars("XRPBTC", CandlestickInterval.FIVE_MINUTES, limit, null, null);
         final List<CandleValue> result = new ArrayList<CandleValue>();
